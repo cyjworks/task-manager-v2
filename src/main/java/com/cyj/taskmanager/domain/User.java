@@ -3,7 +3,7 @@ package com.cyj.taskmanager.domain;
 import jakarta.persistence.*;
 
 @Entity
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

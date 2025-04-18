@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-public class Task {
+public class Task extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

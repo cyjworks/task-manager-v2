@@ -1,6 +1,8 @@
 package com.cyj.taskmanager.service;
 
 import com.cyj.taskmanager.domain.User;
+import com.cyj.taskmanager.dto.LoginResponseDTO;
+import com.cyj.taskmanager.dto.UserLoginDTO;
 import com.cyj.taskmanager.dto.UserSignupDTO;
 import com.cyj.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +47,18 @@ public class UserService {
 
     public boolean duplicateCheckEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public LoginResponseDTO login(UserLoginDTO dto) {
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
+        if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+
+        String fakeToken = "temporary-token-for-testing";
+
+        return new LoginResponseDTO(fakeToken, user.getUsername());
     }
 }

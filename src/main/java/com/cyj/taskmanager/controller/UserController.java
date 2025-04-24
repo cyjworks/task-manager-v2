@@ -1,5 +1,7 @@
 package com.cyj.taskmanager.controller;
 
+import com.cyj.taskmanager.dto.LoginResponseDTO;
+import com.cyj.taskmanager.dto.UserLoginDTO;
 import com.cyj.taskmanager.dto.UserSignupDTO;
 import com.cyj.taskmanager.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +21,11 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody UserSignupDTO dto) {
         Long userId = userService.signup(dto);
         return ResponseEntity.ok("User registered with ID: " + userId);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO dto) {
+        LoginResponseDTO response = userService.login(dto);
+        return ResponseEntity.ok(response);
     }
 }

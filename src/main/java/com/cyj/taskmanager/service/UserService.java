@@ -3,6 +3,7 @@ package com.cyj.taskmanager.service;
 import com.cyj.taskmanager.domain.User;
 import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.repository.UserRepository;
+import com.cyj.taskmanager.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     public Long signup(UserSignupDTO dto) {
         // 1. Check for duplicates
@@ -55,9 +57,8 @@ public class UserService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        String fakeToken = "temporary-token-for-testing";
-
-        return new LoginResponseDTO(fakeToken, user.getUsername());
+        String token = jwtProvider.generateToken(user.getUsername());
+        return new LoginResponseDTO(token, user.getUsername());
     }
 
     public UserResponseDTO getUserProfile(String username) {

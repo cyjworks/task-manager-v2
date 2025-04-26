@@ -1,9 +1,7 @@
 package com.cyj.taskmanager.service;
 
 import com.cyj.taskmanager.domain.User;
-import com.cyj.taskmanager.dto.LoginResponseDTO;
-import com.cyj.taskmanager.dto.UserLoginDTO;
-import com.cyj.taskmanager.dto.UserSignupDTO;
+import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,5 +58,31 @@ public class UserService {
         String fakeToken = "temporary-token-for-testing";
 
         return new LoginResponseDTO(fakeToken, user.getUsername());
+    }
+
+    public UserResponseDTO getUserProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return UserResponseDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .build();
+    }
+
+    public void updateUserProfile(String username, UserUpdateDTO dto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.updateProfile(dto);
+        userRepository.save(user);
+    }
+
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        userRepository.delete(user);
     }
 }

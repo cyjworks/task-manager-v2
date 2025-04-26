@@ -1,5 +1,6 @@
 package com.cyj.taskmanager.domain;
 
+import com.cyj.taskmanager.dto.UserUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +24,9 @@ public class User extends BaseEntity {
     private String password;
 
     private String fullName;
+
+    public void updateProfile(UserUpdateDTO dto) {
+        this.fullName = dto.getFullName();
+        this.email = dto.getEmail();
+    }
 }

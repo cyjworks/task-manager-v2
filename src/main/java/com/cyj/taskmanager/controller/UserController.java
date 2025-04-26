@@ -1,15 +1,10 @@
 package com.cyj.taskmanager.controller;
 
-import com.cyj.taskmanager.dto.LoginResponseDTO;
-import com.cyj.taskmanager.dto.UserLoginDTO;
-import com.cyj.taskmanager.dto.UserSignupDTO;
+import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -27,5 +22,25 @@ public class UserController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody UserLoginDTO dto) {
         LoginResponseDTO response = userService.login(dto);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMyProfile(@RequestParam String username) {
+        UserResponseDTO user = userService.getUserProfile(username);
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> updateMyProfile(
+            @RequestParam String username,
+            @RequestBody UserUpdateDTO dto) {
+        userService.updateUserProfile(username, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount(@RequestParam String username) {
+        userService.deleteUser(username);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.cyj.taskmanager.controller;
 
+import com.cyj.taskmanager.common.ApiResponse;
 import com.cyj.taskmanager.dto.TaskRequestDTO;
 import com.cyj.taskmanager.dto.TaskResponseDTO;
 import com.cyj.taskmanager.service.TaskService;
@@ -17,25 +18,27 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<Long> createTask(@RequestBody TaskRequestDTO dto) {
+    public ResponseEntity<ApiResponse<Long>> createTask(@RequestBody TaskRequestDTO dto) {
         Long taskId = taskService.createTask(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(taskId));
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
-        return ResponseEntity.ok(taskService.getAllTasks());
+    public ResponseEntity<ApiResponse<List<TaskResponseDTO>>> getAllTasks() {
+        List<TaskResponseDTO> tasks = taskService.getAllTasks();
+        return ResponseEntity.ok(ApiResponse.success(tasks));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> getTask(@PathVariable Long id) {
-        return ResponseEntity.ok(taskService.getTaskById(id));
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> getTask(@PathVariable Long id) {
+        TaskResponseDTO task = taskService.getTaskById(id);
+        return ResponseEntity.ok(ApiResponse.success(task));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateTask(@PathVariable Long id, @RequestBody TaskRequestDTO dto) {
-        taskService.updateTask(id, dto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> updateTask(@PathVariable Long id, @RequestBody TaskRequestDTO dto) {
+        TaskResponseDTO updatedTask = taskService.updateTask(id, dto);
+        return ResponseEntity.ok(ApiResponse.success(updatedTask));
     }
 
     @DeleteMapping("{id}")

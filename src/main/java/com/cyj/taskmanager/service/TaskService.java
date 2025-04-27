@@ -56,11 +56,12 @@ public class TaskService {
         return toDTO(task);
     }
 
-    public void updateTask(Long id, TaskRequestDTO dto) {
+    public TaskResponseDTO updateTask(Long id, TaskRequestDTO dto) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
         task.updateFromDTO(dto);
         taskRepository.save(task);
+        return toDTO(task);
     }
 
     public void deleteTask(Long id) {

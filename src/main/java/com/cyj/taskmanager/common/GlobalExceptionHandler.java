@@ -11,50 +11,47 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
+    public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException e) {
         ErrorResponse response = new ErrorResponse(
                 e.getErrorCode().getCode(),
                 e.getErrorCode().getMessage()
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(response));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
         ErrorResponse response = new ErrorResponse(
                 "VALIDATION-400",
                 "Invalid request data"
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(response));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
+    public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(ConstraintViolationException e) {
         ErrorResponse response = new ErrorResponse(
                 "VALIDATION-400",
                 "Invalid request parameter"
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(response));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException e) {
         ErrorResponse response = new ErrorResponse(
                 "AUTH-403",
                 "Access denied"
         );
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(response);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.fail(response));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
         ErrorResponse response = new ErrorResponse(
                 "COMMON-500",
                 "Internal Server Error"
         );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.fail(response));
     }
 }

@@ -74,12 +74,18 @@ public class UserService {
                 .build();
     }
 
-    public void updateUserProfile(String username, UserUpdateDTO dto) {
+    public UserResponseDTO updateUserProfile(String username, UserUpdateDTO dto) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         user.updateProfile(dto);
         userRepository.save(user);
+
+        return UserResponseDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .build();
     }
 
     public void deleteUser(String username) {

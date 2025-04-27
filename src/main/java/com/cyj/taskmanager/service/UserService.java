@@ -1,5 +1,7 @@
 package com.cyj.taskmanager.service;
 
+import com.cyj.taskmanager.common.CustomException;
+import com.cyj.taskmanager.common.ErrorCode;
 import com.cyj.taskmanager.domain.User;
 import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.repository.UserRepository;
@@ -18,10 +20,10 @@ public class UserService {
     public Long signup(UserSignupDTO dto) {
         // 1. Check for duplicates
         if(duplicateCheckUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if(duplicateCheckEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         // 2. Encrypt password
@@ -51,10 +53,10 @@ public class UserService {
 
     public LoginResponseDTO login(UserLoginDTO dto) {
         User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         String token = jwtProvider.generateToken(user.getUsername());
@@ -63,7 +65,7 @@ public class UserService {
 
     public UserResponseDTO getUserProfile(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return UserResponseDTO.builder()
                 .username(user.getUsername())
@@ -74,7 +76,7 @@ public class UserService {
 
     public void updateUserProfile(String username, UserUpdateDTO dto) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         user.updateProfile(dto);
         userRepository.save(user);
@@ -82,7 +84,7 @@ public class UserService {
 
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         userRepository.delete(user);
     }

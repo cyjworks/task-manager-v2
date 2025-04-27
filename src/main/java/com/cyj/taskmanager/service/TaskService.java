@@ -1,12 +1,13 @@
 package com.cyj.taskmanager.service;
 
+import com.cyj.taskmanager.common.CustomException;
+import com.cyj.taskmanager.common.ErrorCode;
 import com.cyj.taskmanager.domain.Task;
 import com.cyj.taskmanager.domain.User;
 import com.cyj.taskmanager.dto.TaskRequestDTO;
 import com.cyj.taskmanager.dto.TaskResponseDTO;
 import com.cyj.taskmanager.repository.TaskRepository;
 import com.cyj.taskmanager.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,11 @@ public class TaskService {
 
     public Long createTask(TaskRequestDTO dto) {
         if(dto.getUserId() == null) {
-            throw new IllegalArgumentException("User ID is null");
+            throw new CustomException(ErrorCode.USER_ID_NULL);
         }
 
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Task task = Task.builder()
                 .owner(user)
@@ -51,20 +52,20 @@ public class TaskService {
 
     public TaskResponseDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
         return toDTO(task);
     }
 
     public void updateTask(Long id, TaskRequestDTO dto) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
         task.updateFromDTO(dto);
         taskRepository.save(task);
     }
 
     public void deleteTask(Long id) {
         if(!taskRepository.existsById(id)) {
-            throw new EntityNotFoundException("Task not found");
+            throw new CustomException(ErrorCode.TASK_NOT_FOUND);
         }
         taskRepository.deleteById(id);
     }

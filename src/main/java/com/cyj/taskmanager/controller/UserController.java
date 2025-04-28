@@ -3,6 +3,7 @@ package com.cyj.taskmanager.controller;
 import com.cyj.taskmanager.common.ApiResponse;
 import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<Long>> signup(@RequestBody UserSignupDTO dto) {
+    public ResponseEntity<ApiResponse<Long>> signup(@RequestBody @Valid UserSignupDTO dto) {
         Long userId = userService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(userId));
     }
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> updateMyProfile(@RequestParam String username, @RequestBody UserUpdateDTO dto) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> updateMyProfile(@RequestParam String username, @RequestBody @Valid UserUpdateDTO dto) {
         UserResponseDTO updatedUser = userService.updateUserProfile(username, dto);
         return ResponseEntity.ok(ApiResponse.success(updatedUser));
     }

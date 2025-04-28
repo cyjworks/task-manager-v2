@@ -78,7 +78,7 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        user.updateProfile(dto);
+        user.updateProfile(dto, passwordEncoder);
         userRepository.save(user);
 
         return UserResponseDTO.builder()

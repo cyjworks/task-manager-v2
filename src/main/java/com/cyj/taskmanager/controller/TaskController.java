@@ -4,6 +4,7 @@ import com.cyj.taskmanager.common.ApiResponse;
 import com.cyj.taskmanager.dto.TaskRequestDTO;
 import com.cyj.taskmanager.dto.TaskResponseDTO;
 import com.cyj.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Long>> createTask(@RequestBody TaskRequestDTO dto) {
+    public ResponseEntity<ApiResponse<Long>> createTask(@RequestBody @Valid TaskRequestDTO dto) {
         Long taskId = taskService.createTask(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(taskId));
     }
@@ -36,7 +37,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<TaskResponseDTO>> updateTask(@PathVariable Long id, @RequestBody TaskRequestDTO dto) {
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> updateTask(@PathVariable Long id, @RequestBody @Valid TaskRequestDTO dto) {
         TaskResponseDTO updatedTask = taskService.updateTask(id, dto);
         return ResponseEntity.ok(ApiResponse.success(updatedTask));
     }

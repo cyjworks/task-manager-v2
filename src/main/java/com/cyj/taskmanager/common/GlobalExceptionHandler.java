@@ -21,9 +21,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("Invalid request data");
+
         ErrorResponse response = new ErrorResponse(
                 "VALIDATION-400",
-                "Invalid request data"
+                errorMessage
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(response));
     }

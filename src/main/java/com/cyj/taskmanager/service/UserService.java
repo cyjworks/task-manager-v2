@@ -1,8 +1,11 @@
 package com.cyj.taskmanager.service;
 
+import com.cyj.taskmanager.common.CustomException;
+import com.cyj.taskmanager.common.ErrorCode;
 import com.cyj.taskmanager.domain.User;
 import com.cyj.taskmanager.dto.*;
 import com.cyj.taskmanager.repository.UserRepository;
+import com.cyj.taskmanager.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,14 +15,15 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     public Long signup(UserSignupDTO dto) {
         // 1. Check for duplicates
         if(duplicateCheckUsername(dto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if(duplicateCheckEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         // 2. Encrypt password
@@ -49,20 +53,19 @@ public class UserService {
 
     public LoginResponseDTO login(UserLoginDTO dto) {
         User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
 
         if(!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        String fakeToken = "temporary-token-for-testing";
-
-        return new LoginResponseDTO(fakeToken, user.getUsername());
+        String token = jwtProvider.generateToken(user.getUsername());
+        return new LoginResponseDTO(token, user.getUsername());
     }
 
     public UserResponseDTO getUserProfile(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return UserResponseDTO.builder()
                 .username(user.getUsername())
@@ -71,17 +74,23 @@ public class UserService {
                 .build();
     }
 
-    public void updateUserProfile(String username, UserUpdateDTO dto) {
+    public UserResponseDTO updateUserProfile(String username, UserUpdateDTO dto) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        user.updateProfile(dto);
+        user.updateProfile(dto, passwordEncoder);
         userRepository.save(user);
+
+        return UserResponseDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .build();
     }
 
     public void deleteUser(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         userRepository.delete(user);
     }

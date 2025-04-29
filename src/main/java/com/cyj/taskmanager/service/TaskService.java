@@ -1,13 +1,15 @@
 package com.cyj.taskmanager.service;
 
+import com.cyj.taskmanager.common.CustomException;
+import com.cyj.taskmanager.common.ErrorCode;
 import com.cyj.taskmanager.domain.Task;
 import com.cyj.taskmanager.domain.User;
 import com.cyj.taskmanager.dto.TaskRequestDTO;
 import com.cyj.taskmanager.dto.TaskResponseDTO;
 import com.cyj.taskmanager.repository.TaskRepository;
 import com.cyj.taskmanager.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +21,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    public Long createTask(TaskRequestDTO dto) {
-        if(dto.getUserId() == null) {
-            throw new IllegalArgumentException("User ID is null");
-        }
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
 
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public Long createTask(TaskRequestDTO dto) {
+        User user = getCurrentUser();
 
         Task task = Task.builder()
                 .owner(user)
@@ -44,29 +47,52 @@ public class TaskService {
     }
 
     public List<TaskResponseDTO> getAllTasks() {
-        return taskRepository.findAll().stream()
+        User user = getCurrentUser();
+
+        return taskRepository.findByOwner(user).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
     public TaskResponseDTO getTaskById(Long id) {
+        User user = getCurrentUser();
+
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        if (!task.getOwner().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
         return toDTO(task);
     }
 
-    public void updateTask(Long id, TaskRequestDTO dto) {
+    public TaskResponseDTO updateTask(Long id, TaskRequestDTO dto) {
+        User user = getCurrentUser();
+
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Task not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
         task.updateFromDTO(dto);
+
+        if (!task.getOwner().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
         taskRepository.save(task);
+        return toDTO(task);
     }
 
     public void deleteTask(Long id) {
-        if(!taskRepository.existsById(id)) {
-            throw new EntityNotFoundException("Task not found");
+        User user = getCurrentUser();
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
+
+        if (!task.getOwner().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
-        taskRepository.deleteById(id);
+
+        taskRepository.delete(task);
     }
 
     private TaskResponseDTO toDTO(Task task) {

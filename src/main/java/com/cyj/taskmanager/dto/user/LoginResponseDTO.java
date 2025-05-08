@@ -1,4 +1,4 @@
-package com.cyj.taskmanager.dto;
+package com.cyj.taskmanager.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

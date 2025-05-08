@@ -3,7 +3,7 @@ package com.cyj.taskmanager.service;
 import com.cyj.taskmanager.common.CustomException;
 import com.cyj.taskmanager.common.ErrorCode;
 import com.cyj.taskmanager.domain.User;
-import com.cyj.taskmanager.dto.*;
+import com.cyj.taskmanager.dto.user.*;
 import com.cyj.taskmanager.repository.UserRepository;
 import com.cyj.taskmanager.security.JwtProvider;
 import lombok.RequiredArgsConstructor;

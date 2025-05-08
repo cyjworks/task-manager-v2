@@ -1,6 +1,6 @@
 package com.cyj.taskmanager.domain;
 
-import com.cyj.taskmanager.dto.UserUpdateDTO;
+import com.cyj.taskmanager.dto.user.UserUpdateDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -1,4 +1,4 @@
-package com.cyj.taskmanager.dto;
+package com.cyj.taskmanager.dto.task;
 
 import com.cyj.taskmanager.domain.enums.TaskPriority;
 import com.cyj.taskmanager.domain.enums.TaskProgress;

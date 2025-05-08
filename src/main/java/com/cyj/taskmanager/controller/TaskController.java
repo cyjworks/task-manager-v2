@@ -1,8 +1,8 @@
 package com.cyj.taskmanager.controller;
 
 import com.cyj.taskmanager.common.ApiResponse;
-import com.cyj.taskmanager.dto.TaskRequestDTO;
-import com.cyj.taskmanager.dto.TaskResponseDTO;
+import com.cyj.taskmanager.dto.task.TaskRequestDTO;
+import com.cyj.taskmanager.dto.task.TaskResponseDTO;
 import com.cyj.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

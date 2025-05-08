@@ -1,6 +1,5 @@
-package com.cyj.taskmanager.dto;
+package com.cyj.taskmanager.dto.user;
 
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateDTO {
-    @Size(min = 6, message = "Password must be at least 6 characters long")
-    private String password;
-
+public class UserResponseDTO {
+    private String username;
     private String email;
     private String fullName;
 }

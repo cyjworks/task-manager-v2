@@ -3,7 +3,7 @@ package com.cyj.taskmanager.domain;
 import com.cyj.taskmanager.domain.enums.TaskPriority;
 import com.cyj.taskmanager.domain.enums.TaskProgress;
 import com.cyj.taskmanager.domain.enums.TaskType;
-import com.cyj.taskmanager.dto.TaskRequestDTO;
+import com.cyj.taskmanager.dto.task.TaskRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

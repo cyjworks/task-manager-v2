@@ -35,6 +35,9 @@ public class UserService {
                 .email(dto.getEmail())
                 .password(encodedPassword)
                 .fullName(dto.getFullName())
+                .bio(dto.getBio())
+                .location(dto.getLocation())
+                .profileImageUrl(dto.getProfileImageUrl())
                 .build();
 
         // 4. Save to DB
@@ -71,6 +74,9 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .bio(user.getBio())
+                .location(user.getLocation())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 
@@ -85,6 +91,9 @@ public class UserService {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
+                .bio(user.getBio())
+                .location(user.getLocation())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
     }
 

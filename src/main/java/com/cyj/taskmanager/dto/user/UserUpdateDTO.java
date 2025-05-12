@@ -16,4 +16,7 @@ public class UserUpdateDTO {
 
     private String email;
     private String fullName;
+    private String bio;
+    private String location;
+    private String profileImageUrl;
 }

@@ -21,4 +21,7 @@ public class UserSignupDTO {
     private String email;
 
     private String fullName;
+    private String bio;
+    private String location;
+    private String profileImageUrl;
 }

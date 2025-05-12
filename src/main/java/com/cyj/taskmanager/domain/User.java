@@ -25,6 +25,9 @@ public class User extends BaseEntity {
     private String email;
 
     private String fullName;
+    private String bio;
+    private String location;
+    private String profileImageUrl;
 
     public void updateProfile(UserUpdateDTO dto, PasswordEncoder passwordEncoder) {
         if(dto.getPassword() != null && !dto.getPassword().isBlank()) {
@@ -35,6 +38,15 @@ public class User extends BaseEntity {
         }
         if(dto.getFullName() != null) {
             this.fullName = dto.getFullName();
+        }
+        if(dto.getBio() != null) {
+            this.bio = dto.getBio();
+        }
+        if(dto.getLocation() != null) {
+            this.location = dto.getLocation();
+        }
+        if(dto.getProfileImageUrl() != null) {
+            this.profileImageUrl = dto.getProfileImageUrl();
         }
     }
 }

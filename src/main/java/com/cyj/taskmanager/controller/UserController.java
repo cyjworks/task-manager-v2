@@ -3,6 +3,8 @@ package com.cyj.taskmanager.controller;
 import com.cyj.taskmanager.common.ApiResponse;
 import com.cyj.taskmanager.dto.user.*;
 import com.cyj.taskmanager.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,9 +24,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody UserLoginDTO dto) {
-        LoginResponseDTO response = userService.login(dto);
-        return ResponseEntity.ok(ApiResponse.success(response));
+    public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody UserLoginDTO dto, HttpServletResponse response) {
+        LoginResponseDTO loginResponse = userService.login(dto);
+
+        Cookie cookie = new Cookie("token", loginResponse.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(7*24*60*60);   // 7 days
+
+        response.addCookie(cookie);
+
+        LoginResponseDTO body = new LoginResponseDTO(null, loginResponse.getUsername());
+
+        return ResponseEntity.ok(ApiResponse.success(body));
     }
 
     @GetMapping("/me")

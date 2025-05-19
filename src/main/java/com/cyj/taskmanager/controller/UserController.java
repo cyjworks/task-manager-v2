@@ -42,6 +42,20 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(body));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("token", "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);    // Use true in production (HTTPS)
+        cookie.setPath("/");
+        cookie.setMaxAge(0);    // Expire immediately
+        response.addCookie(cookie);
+
+        SecurityContextHolder.clearContext();
+
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponseDTO>> getMyProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

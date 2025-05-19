@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,19 +43,28 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> getMyProfile(@RequestParam String username) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> getMyProfile() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
         UserResponseDTO user = userService.getUserProfile(username);
         return ResponseEntity.ok(ApiResponse.success(user));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> updateMyProfile(@RequestParam String username, @RequestBody @Valid UserUpdateDTO dto) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> updateMyProfile(@RequestBody @Valid UserUpdateDTO dto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
         UserResponseDTO updatedUser = userService.updateUserProfile(username, dto);
         return ResponseEntity.ok(ApiResponse.success(updatedUser));
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteMyAccount(@RequestParam String username) {
+    public ResponseEntity<Void> deleteMyAccount() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }

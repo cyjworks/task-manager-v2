@@ -9,6 +9,9 @@ A simple task management web application built with Spring Boot and PostgreSQL.
 - Spring Data JPA
 - Spring Security
 - PostgreSQL
+- React 19 + Vite
+- Material-UI
+- Axios
 - Gradle
 - DBeaver (optional DB viewer)
 - Postman (for API testing)
